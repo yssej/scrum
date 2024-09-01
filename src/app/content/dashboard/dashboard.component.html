@@ -1,0 +1,17 @@
+<div class="card mb-4 mb-md-0">
+    <div class="example-list" style="margin: 12px;cursor: pointer;">
+        <i class="bi bi-list-task"></i>&nbsp;
+        <b>Assigner en tant que Product owner</b>
+        <i style="float: right" (click)="basicCollapses.toggle()" class="bi bi-chevron-down"></i>
+    </div>
+    <div id="collapseExample" mdbCollapse #basicCollapses="mdbCollapse" style="position: static;">
+        <ng-container *ngFor="let fonctionnalite of projets">
+            <div class="example-list" style="background-color: #c9c9da71;">
+                <div class="example-box" >
+                    <i class="bi bi-check-lg text-success"></i>soustache.nom<br>
+                    12 nov - 19 nov 2018
+                </div> 
+            </div>                                           
+        </ng-container>
+    </div>
+</div>

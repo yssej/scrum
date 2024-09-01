@@ -1,0 +1,120 @@
+<ng-template #myModal let-modal style="width: 1000px;">
+    <div class="modal-header" style="background-color: #007bff;">
+		<h4 class="modal-title" id="modal-basic-title" style="color: aliceblue;">Choisissez un projet à travailler</h4>
+		<button style="background-color: antiquewhite;" type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+	</div>
+	<div class="modal-body">
+        <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Nom du projet</th>
+                <th scope="col">Etat actuel</th>
+                <th scope="col">Créateur</th>
+                <th scope="col">Résponsable</th>
+                <!-- <th scope="col">TDR</th> -->
+              </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let projects of allProjects | paginate:{itemsPerPage:7, currentPage:page, totalItems:totalLength}">
+                    <td style="width: 100px;"><button type="button" class="btn btn-link btn-sm btn-rounded" (click)="voirProjetDetail(projects.idProjet)">
+                    {{projects.nom}}
+                    </button></td>
+                    <td style="width: 70px;">{{projects.etat}}</td>
+                    <ng-container *ngIf="projects.idCreateur?.username; else noCreateur">
+                    <td class="col-3">
+                        <!-- <a href="">{{projects.idCreateur.username}}</a> -->
+                        <div *ngIf="projects.idCreateur?.photo">
+                        <img
+                            src="assets\{{projects.idCreateur.photo}}"
+                            alt=""
+                            style="width: 45px; height: 45px;cursor: pointer;"
+                            class="rounded-circle"
+                            title="{{projects.idCreateur.username}}"
+                        />
+                        </div>
+                        <div *ngIf="!projects.idCreateur.photo">
+                        <img
+                            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQP7NjSjKYoQFApBGgMXfrAioIDBfleCIZWyA&usqp=CAU"
+                            alt=""
+                            style="width: 45px; height: 45px;cursor: pointer;"
+                            class="rounded-circle"
+                            title="{{projects.idCreateur.username}}"
+                        />
+                        </div>
+                    </td>
+                    </ng-container>
+                    <ng-template #noCreateur>
+                        <td ngbDropdown class="col-3">
+                            <img
+                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/1200px-Circle-icons-profile.svg.png"
+                                alt=""
+                                style="width: 45px; height: 45px;cursor: pointer;"
+                                class="rounded-circle"
+                                title="Ajouter user"
+                            />
+                        </td>
+                    </ng-template>
+                    <ng-container *ngIf="projects.idResponsable?.username; else noCreateure">
+                        <td class="col-2">
+                            <div *ngIf="projects.idResponsable?.photo">
+                                <img
+                                    src="assets\{{projects.idResponsable.photo}}"
+                                    alt=""
+                                    style="width: 45px; height: 45px;cursor: pointer;"
+                                    class="rounded-circle"
+                                    title="{{projects.idResponsable.username}}"
+                                />
+                            </div>
+                            <div *ngIf="!projects.idResponsable.photo">
+                                <img
+                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQP7NjSjKYoQFApBGgMXfrAioIDBfleCIZWyA&usqp=CAU"
+                                    alt=""
+                                    style="width: 45px; height: 45px;cursor: pointer;"
+                                    class="rounded-circle"
+                                    title="{{projects.idResponsable.username}}"
+                                />
+                            </div>
+                        </td>
+                    </ng-container>
+                    <ng-template #noCreateure>
+                        <td ngbDropdown class="col-2">
+                            <img
+                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/1200px-Circle-icons-profile.svg.png"
+                                alt=""
+                                style="width: 45px; height: 45px"
+                                class="rounded-circle"
+                                title="Ajouter user"
+                            />
+                        </td>
+                    </ng-template>
+                    <td class="col-2"><button class="btn btn-primary" (click)="choixProjet(projects.idProjet)">Choisir</button></td>
+                </tr>
+            </tbody>
+        </table>
+          
+        <div class="pagination align-items-end">
+            <pagination-controls (pageChange)="page=$event"></pagination-controls>
+        </div>
+	</div>
+</ng-template>
+<div *ngIf="isLogged">
+    <p *ngIf="!idProjet" (click)="open(myModal)">Aucun projet choisi</p>
+    <div *ngIf="idProjet && projetInWork">
+        <ejs-gantt #ganttObject
+            *ngIf="data"
+            [dataSource]="data"
+            [taskFields]="taskSettings"
+            [columns]="columnSettings"
+            [toolbar]="toolbarOptions"
+            [allowPdfExport]="true"
+            [allowExcelExport]="true"
+            height= "750px"
+            (toolbarClick)="toolbarBtnClick($event)">
+        </ejs-gantt>
+    </div>
+</div>
+
+<div *ngIf="!isLogged">
+    <p>Vous devez d'abord vous connecter</p>
+    <a class="btn btn-primary" href="/">Retour</a>
+</div>

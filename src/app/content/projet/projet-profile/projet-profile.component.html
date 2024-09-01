@@ -1,0 +1,403 @@
+<div>
+    <div class="body">
+        <div class="col-lg-12">
+            <div class="row">
+                <div class="col-md-8" style="max-height: 661px; overflow: auto;">
+                    <button (click)="workIn()" class="btn btn-link" style="float: right;">Travailler sur</button>
+                    <h4  *ngIf="isLogged && projet">{{projet.nom}}</h4>
+                    <strong>Burn down chart</strong>
+                    <div id="divChart">
+                        <canvas id="myChart"></canvas>
+                    </div>
+                    <br>
+                    <strong>Description</strong>
+                    <p  *ngIf="isLogged && projet">{{projet.description}}</p>
+                    <strong>Fichier joint:</strong>
+                        <form class="mx-1 mx-md-4" (ngSubmit)="onSubmit(myGroup)" ngNativeValidate>          
+                            <div [formGroup]="myGroup" enctype="multipart/form-data">
+                                <input type="file" id="form3Example4cd02" style="width: 320px;" multiple class="form-control" (change)="uploadFile($event,myGroup)"/>
+                            </div>
+                        </form>
+                    <br>
+                    <div class="js-upload-finished">
+                        <div *ngFor="let file of fichiersProjet" class="list-group">
+                            <a (click)="onDownloadFile(file.nom)" class="list-group-item list-group-item-success" style="cursor: pointer;">
+                              {{ file.nom }}            
+                              <a class="alert-success float-right">Download</a>
+                            </a><br>
+                          </div>
+                        <br>
+                        <div class="col">
+                            <!-- <a class="btn btn-light btn-rounded"
+                                (click)="basicCollapses.toggle()"
+                                aria-controls="collapseExample"><i class="bi bi-chevron-down"></i> Issues
+                            </a> -->
+                            <div  id="collapseExample"  style="position: static;">
+                                <strong>Activité</strong>
+                                <div class="col-md-12 h-100 p-2 bg-light border rounded-3">
+                                    <p>Afficher : 
+                                        <input mdbCheckbox type="checkbox" (click)="setActivity()" class="btn-check" id="btn-check" autocomplete="off" *ngIf="activity == 'historique'" checked/>
+                                        <input mdbCheckbox type="checkbox" (click)="setActivity()" class="btn-check" id="btn-check" autocomplete="off" *ngIf="activity != 'historique'"/>
+                                        <label class="btn btn-outline-primary btn-floating btn-sm" for="btn-check">Historique</label>
+                                        &nbsp;
+                                        <input mdbCheckbox type="checkbox" (click)="setActivity()" class="btn-check" id="btn-check2" autocomplete="off" *ngIf="activity != 'commentaire'"/>
+                                        <input mdbCheckbox type="checkbox" (click)="setActivity()" class="btn-check" id="btn-check2" autocomplete="off" *ngIf="activity == 'commentaire'" checked/>
+                                        <label class="btn btn-outline-primary btn-floating btn-sm" for="btn-check2">Commentaire</label>
+                                    </p>
+                                    <div id="collapseExample" style="position: static;" *ngIf="activity == 'commentaire'">
+                                        <p>
+                                            <button (click)="open(filtreCommentaire)" class="btn btn-primary btn-sm">Filtre</button>&nbsp;
+                                            <button *ngIf="isFiltered == true" class="btn btn-outline-primary" (click)="deleteFilterFile()">Effacer filtre <i class="bi bi-x-lg"></i></button>
+                                        </p>
+                                        <textarea style="width: 100%;" [(ngModel)]="comm.commentaire"></textarea>
+                                        <a class="list-group-item list-group-item-info" style="cursor: pointer;" *ngIf="fileName">
+                                            {{fileName}} (ajouter un commentaire et/ou clickez sur <b>commenter</b> pour uploader le fichier.)</a>
+                                        <button type="button" class="btn btn-outline-primary border-0 btn-sm" 
+                                            style="float: right;" (click)="openFileInput()">Upload fichier
+                                        </button>
+                                        <form class="mx-1 mx-md-4" (ngSubmit)="commentaireWithFile(myGroup)" ngNativeValidate>          
+                                            <div [formGroup]="myGroup" enctype="multipart/form-data">
+                                                <input type="file" #fileInput style="display: none" (change)="uploadFileComment($event,myGroup)">
+                                                <button *ngIf="fileName" style="float: right;" class="btn btn-success border-0 btn-sm">Commenter</button>
+                                            </div>
+                                        </form>
+                                        &nbsp;
+                                        <button *ngIf="!fileName" type="button" (click)="commenterProjet()" class="btn btn-primary border-0 btn-sm" style="float: right;">Commenter</button>
+                                        <div class="list-group list-group-light" style="width: 100%;" *ngIf="commentairesProjet">
+                                            <div class="list-group-item list-group-item-action" style="height: auto" *ngFor="let com of commentairesProjet | paginate:{itemsPerPage:7, currentPage:page2, totalItems:totalLength}">
+                                                <div *ngIf="com.createur.photo">
+                                                    <img
+                                                        src="assets/{{com.createur.photo}}"
+                                                        alt=""
+                                                        style="width: 45px; height: 45px"
+                                                        class="rounded-circle"
+                                                    />&nbsp;
+                                                </div>
+                                                <div *ngIf="!com.createur.photo">
+                                                    <img
+                                                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQP7NjSjKYoQFApBGgMXfrAioIDBfleCIZWyA&usqp=CAU"
+                                                        alt=""
+                                                        style="width: 45px; height: 45px"
+                                                        class="rounded-circle"
+                                                    />&nbsp;
+                                                </div>
+                                                <div style="position: relative;">
+                                                    <b style="position: absolute; top: -50px;left: 50px;">{{com.createur.username}}</b>
+                                                    &nbsp;<i style="position: absolute; top: -25px;left: 50px;">{{com.temp}}</i><br><br>
+                                                </div>
+                                                <div *ngIf="com.file == true">
+                                                    <p style="position: relative; top: -30px;"> 
+                                                        <ng-container *ngIf="com.commentaire != 'undefined'">{{com.commentaire}} <br></ng-container>
+                                                        <ng-container *ngIf="com.commentaire == 'undefined'">Fichier sans commentaire. <br></ng-container>
+                                                        -> <button *ngIf="getCommentaireFile(com)" class="btn btn-link" (click)="onDownloadFileCommentaire(com)">{{getCommentaireFile(com)}}</button>
+                                                    </p>
+                                                    <!-- <p style="position: relative; top: -30px;"></p> -->
+                                                    <p style="position: relative;">
+                                                        <button type="button" class="btn btn-link">Modifier</button>
+                                                        <button type="button" class="btn btn-link" (click)="deleteCommentaire(com.idCommentaire)">Supprimer</button>
+                                                    </p>
+                                                </div>
+                                                <div *ngIf="com.file == false">
+                                                    <p style="position: relative; top: -35px;" *ngIf="com.updating == false">{{com.commentaire}}</p>
+                                                    <div *ngIf="com.updating == true">
+                                                        <textarea name="" id="" cols="60" rows="5" [(ngModel)]="com.commentaire"></textarea>
+                                                    </div>
+                                                    <p>
+                                                        <button *ngIf="com.createur.id == moi.id" type="button" class="btn btn-link" (click)="updateCommentaire(com.idCommentaire,com)">Modifier</button>
+                                                        &nbsp;
+                                                        <button *ngIf="com.createur.id == moi.id" type="button" class="btn btn-link" (click)="deleteCommentaire(com.idCommentaire)">Supprimer</button>
+                                                    </p>
+                                                </div>
+                                            </div>                                      
+                                            <div class="pagination align-items-end">
+                                                <pagination-controls (pageChange)="page2=$event"></pagination-controls>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="collapseExample" style="position: static;" *ngIf="activity == 'historique'">
+                                        &nbsp;
+                                        <button (click)="open(filtreHistorique)" class="btn btn-primary btn-sm">Filtre</button>&nbsp;
+                                        <button *ngIf="isFiltered == true" class="btn btn-outline-primary" (click)="deleteFilter()">Effacer filtre <i class="bi bi-x-lg"></i></button>
+                                        <div class="list-group list-group-light" style="width: 100%;" *ngIf="historiqueProjet">
+                                            <div class="list-group-item list-group-item-action px-3" style="height: 120px" *ngFor="let historique of historiqueProjet | paginate:{itemsPerPage:7, currentPage:page, totalItems:totalLength}">
+                                                <div *ngIf="historique.idCreateur && historique.idCreateur.photo">
+                                                    <img
+                                                        src="assets/{{historique.idCreateur.photo}}"
+                                                        alt=""
+                                                        style="width: 45px; height: 45px"
+                                                        class="rounded-circle"
+                                                    />&nbsp;
+                                                </div>
+                                                <div *ngIf="historique.idCreateur && !historique.idCreateur.photo">
+                                                    <img
+                                                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQP7NjSjKYoQFApBGgMXfrAioIDBfleCIZWyA&usqp=CAU"
+                                                        alt=""
+                                                        style="width: 45px; height: 45px"
+                                                        class="rounded-circle"
+                                                    />&nbsp;
+                                                </div>
+                                                <div style="position: relative;">
+                                                    <b style="position: absolute; top: -50px;left: 50px;" *ngIf="historique.idCreateur">{{historique.idCreateur.username}}</b>
+                                                    &nbsp;<i style="position: absolute; top: -25px;left: 50px;" *ngIf="historique.dateCreation">{{historique.dateCreation}}</i><br><br>
+                                                </div>
+                                                
+                                                <div style="position: relative;">
+                                                    <p style="position: absolute; top: -35px;">{{historique.historique}}</p>
+                                                </div>
+                                            </div>                                        
+                                            <div class="pagination align-items-end">
+                                                <pagination-controls (pageChange)="page=$event"></pagination-controls>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="d-inline-block">
+                        <button type="button" class="btn btn-secondary" id="dropdown1" (click)="basicCollapses.toggle()"
+                        *ngIf="isLogged && projet && projet.etat == 'à faire'">
+                            {{projet.etat}}
+                        </button>
+                        <button type="button" class="btn btn-primary" id="dropdown1" (click)="basicCollapses.toggle()" *ngIf="isLogged && projet && projet.etat == 'En progrès'">
+                            {{projet.etat}}
+                        </button>
+                        <button type="button" class="btn btn-success" id="dropdown1" (click)="basicCollapses.toggle()" *ngIf="isLogged && projet && projet.etat == 'Terminé'">
+                            {{projet.etat}}
+                        </button>
+                        <div id="collapseExample" mdbCollapse #basicCollapses="mdbCollapse" style="position: static;">
+                            <div aria-labelledby="dropdown1" *ngIf="isLogged && projet && projet.etat == 'à faire'">
+                                <button type="button" (click)="setProjectToInProgress(projet.idProjet,projet)" class="btn btn-outline-primary" id="dropdown1" >
+                                    En progrès
+                                </button><br>
+                                <button type="button" (click)="setProjectToTermine(projet.idProjet,projet)" class="btn btn-outline-success" id="dropdown1" >
+                                    Terminé
+                                </button>
+                            </div>
+                            <div aria-labelledby="dropdown1" *ngIf="isLogged && projet && projet.etat == 'En progrès'">
+                                <button type="button" (click)="setProjectToAfaire(projet.idProjet,projet)" class="btn btn-outline-secondary" id="dropdown1" >
+                                    à faire
+                                </button><br>
+                                <button type="button" (click)="setProjectToTermine(projet.idProjet,projet)" class="btn btn-outline-success" id="dropdown1" >
+                                    Terminé
+                                </button>
+                            </div>
+                            <div aria-labelledby="dropdown1" *ngIf="isLogged && projet && projet.etat == 'Terminé'">
+                                <button type="button" (click)="setProjectToAfaire(projet.idProjet,projet)" class="btn btnoutline-secondary" id="dropdown1" >
+                                    à faire
+                                </button><br>
+                                <button type="button" (click)="setProjectToInProgress(projet.idProjet,projet)" class="btn btn-outline-primary" id="dropdown1" >
+                                    En progrès
+                                </button>
+                            </div>
+                        </div>
+                    </div><br><br>
+                    <div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                  <th scope="col"><b>Détails</b></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row">Créateur</th>
+                                    <td>
+                                        <img *ngIf="isLogged && projet && projet.idCreateur.photo" src="assets/{{projet.idCreateur.photo}}" 
+                                        style="width: 45px; height: 45px" class="rounded-circle">
+                                        <img *ngIf="isLogged && projet && !projet.idCreateur.photo" src="assets/imageDefault.jpg" 
+                                        style="width: 45px; height: 45px" class="rounded-circle">
+                                    </td>
+                                </tr>
+                                <!-- <tr>
+                                    <th scope="row">Responsable(s)</th>
+                                    <td>
+                                        <ng-container *ngFor="let responsable of responsablesProjet">
+                                            <img *ngIf="responsable.idResponsable && responsable.idResponsable.photo" src="assets/{{responsable.idResponsable.photo}}" 
+                                            style="width: 45px; height: 45px" class="rounded-circle" title="{{responsable.idResponsable.username}}">
+                                            <img *ngIf="responsable.idResponsable && !responsable.idResponsable.photo" src="assets/imageDefault.jpg"
+                                            style="width: 45px; height: 45px" class="rounded-circle" title="{{responsable.idResponsable.username}}">
+                                        </ng-container>
+                                    </td>
+                                </tr> -->
+                                <tr>
+                                    <th scope="row">Product owner(s)</th>
+                                    <td ngbDropdown>
+                                        <ng-container *ngFor="let responsable of responsablesProjet">
+                                            <img *ngIf="responsable.idProductOwner && responsable.idProductOwner.photo" src="assets/{{responsable.idProductOwner.photo}}" 
+                                            style="width: 45px; height: 45px" class="rounded-circle" title="{{responsable.idProductOwner.username}}">
+                                            <img *ngIf="responsable.idProductOwner && !responsable.idProductOwner.photo" src="assets/imageDefault.jpg"
+                                            style="width: 45px; height: 45px" class="rounded-circle" title="{{responsable.idProductOwner.username}}">
+                                        </ng-container>
+                                        <img src="assets/addUser.png" style="width: 45px; height: 45px;cursor: pointer" class="rounded-circle" title="ajouter responsable" ngbDropdownToggle>
+                                        <ul ngbDropdownMenu style="width: 220px;" class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                                            <span>Rechercher:</span>
+                                            <input type="text" placeholder="Search.." name="search" [(ngModel)]="nomRecherche" (input)="getProductOwnerFiltered()" style="width: 120px;"><br>
+                                            <span>Assigner à :</span>
+                                            <li *ngFor="let user of productOwnerFiltered">                               
+                                                <a class="dropdown-item" style="cursor: pointer" [ngClass]="{ 'active': user.isResponsable }" (click)="assignProductOwner(user)" (click)="onItemClick($event)">
+                                                    <div *ngIf="user.photo">
+                                                        <label style="float: left;"><img src="assets\{{user.photo}}" style="width: 30px;height: 30px;" class="rounded-circle"></label>
+                                                    </div>
+                                                    <div *ngIf="!user.photo">
+                                                        <label style="float: left;"><img src="assets\imageDefault.jpg" style="width: 30px;height: 30px;" class="rounded-circle"></label>
+                                                    </div>
+                                                    &nbsp;{{user.username}}
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <!-- <tr>
+                                    <th scope="row">Scum master(s)</th>
+                                    <td>
+                                        <ng-container *ngFor="let responsable of responsablesProjet">
+                                            <img *ngIf="responsable.idScrumMaster && responsable.idScrumMaster.photo" src="assets/{{responsable.idScrumMaster.photo}}" 
+                                            style="width: 45px; height: 45px" class="rounded-circle" title="{{responsable.idScrumMaster.username}}">
+                                            <img *ngIf="responsable.idScrumMaster && !responsable.idScrumMaster.photo" src="assets/imageDefault.jpg"
+                                            style="width: 45px; height: 45px" class="rounded-circle" title="{{responsable.idScrumMaster.username}}">
+                                        </ng-container>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Devellopers(s)</th>
+                                    <td>
+                                        <ng-container *ngFor="let responsable of responsablesProjet">
+                                            <img *ngIf="responsable.idDevellopers && responsable.idDevellopers.photo" src="assets/{{responsable.idDevellopers.photo}}" 
+                                            style="width: 45px; height: 45px" class="rounded-circle" title="{{responsable.idDevellopers.username}}">
+                                            <img *ngIf="responsable.idDevellopers && !responsable.idDevellopers.photo" src="assets/imageDefault.jpg"
+                                            style="width: 45px; height: 45px" class="rounded-circle" title="{{responsable.idDevellopers.username}}">
+                                        </ng-container>
+                                    </td>
+                                </tr> -->
+                                <tr>
+                                    <th scope="row">Date de création</th>
+                                    <td *ngIf="isLogged && projet"><i>{{projet.dateCreation}}</i></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Date de Debut</th>
+                                    <td *ngIf="isLogged && projet && projet.dateDebut"><i>{{projet.dateDebut}}</i></td>
+                                    <td *ngIf="isLogged && projet && !projet.dateDebut"><input type="date" [(ngModel)]="dateDebut" class="form-control" (change)="setDateProjet(projet)"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Date de Fin</th>
+                                    <td *ngIf="isLogged && projet && projet.dateFin"><i>{{projet.dateFin}}</i></td>
+                                    <td *ngIf="isLogged && projet && !projet.dateFin"><input type="date" [(ngModel)]="dateFin" class="form-control" (change)="setDateProjet(projet)"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Terminé le</th>
+                                    <td *ngIf="isLogged && projet && projet.dateTermine"><i>{{projet.dateTermine}}</i></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <button class="btn btn-outline-primary" (click)="open(updateProject)">Mettre à jour</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="!isLogged">
+    <p>Vous devez d'abord vous connecter</p>
+    <a class="btn btn-primary" href="/">Retour</a>
+</div>
+
+<ng-template #filtreHistorique let-modal>
+    <div class="modal-header" style="background-color: #007bff;">
+        <h4 class="modal-title" id="modal-basic-title" style="color: aliceblue;">Filtre historique</h4>
+        <button style="background-color: antiquewhite;" type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body" *ngIf="projet" ngbDropdown [autoClose]="false">
+        <div class="row justify-content-center">
+            <!-- <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1"> -->
+                <p>
+                    Afficher : 
+                    <button (click)="afficherProjet(null)" class="btn btn-outline-primary">Projet</button>&nbsp;
+                    <button (click)="afficherBacklog(null)" class="btn btn-outline-primary">Backlog</button>&nbsp;
+                    <button (click)="afficherFonctionnalite(null)" class="btn btn-outline-primary">Fonctionnalite</button>&nbsp;
+                    <button (click)="afficherTache(null)" class="btn btn-outline-primary">Tache</button>&nbsp;
+                    <button (click)="afficherFichier(null)" class="btn btn-outline-primary">Fichier</button>
+                </p>
+                <form class="mx-1 mx-md-4">
+
+                </form>
+            <!-- </div> -->
+        </div>
+    </div>
+</ng-template>
+<ng-template #filtreCommentaire let-modal>
+    <div class="modal-header" style="background-color: #007bff;">
+        <h4 class="modal-title" id="modal-basic-title" style="color: aliceblue;">Filtre commentaire</h4>
+        <button style="background-color: antiquewhite;" type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body" *ngIf="projet" ngbDropdown [autoClose]="false">
+        <div class="row justify-content-center">
+            <!-- <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1"> -->
+                <p>
+                    Afficher : 
+                    <button (click)="avecFichier()" class="btn btn-outline-primary">Avec fichier</button>&nbsp;
+                    <button (click)="sansFichier()" class="btn btn-outline-primary">Sans fichier</button>
+                </p>
+                <form class="mx-1 mx-md-4">
+
+                </form>
+            <!-- </div> -->
+        </div>
+    </div>
+</ng-template>
+<ng-template #updateProject let-modal>
+    <div class="modal-header" style="background-color: #007bff;">
+        <h4 class="modal-title" id="modal-basic-title" style="color: aliceblue;">Mis à jour de projet</h4>
+        <button style="background-color: antiquewhite;" type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body" *ngIf="updatedProjet" ngbDropdown [autoClose]="false">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+                <form class="mx-1 mx-md-4">      
+                    <div class="mb-3">
+                        <label for="project-name" class="col-form-label">Nom du projet:</label>
+                        <input type="text" [(ngModel)] = "updatedProjet.nom" class="form-control" id="nom_projet" name="nom_projet" required/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description-text" class="col-form-label">Description:</label>
+                        <textarea class="form-control" [(ngModel)] = "updatedProjet.description" id="description" name="description"></textarea>
+                    </div>
+                    <div class="mb-3" ngbDropdown [autoClose]="false">
+                        <button class="btn btn-outline-primary" ngbDropdownToggle>Product owner</button>
+                        <ul ngbDropdownMenu style="width: 220px;" class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                            <span>Rechercher:</span>
+                            <input type="text" placeholder="Search.." name="search" [(ngModel)]="nomRecherche" (input)="getProductOwnerFiltered()" style="width: 120px;"><br>
+                            <span>Assigner à :</span>
+                            <li *ngFor="let user of productOwnerFiltered">                               
+                                <a class="dropdown-item" style="cursor: pointer" [ngClass]="{ 'active': user.isResponsable }" (click)="assignProductOwner(user)" (click)="onItemClick($event)">
+                                    <div *ngIf="user.photo">
+                                        <label style="float: left;"><img src="assets\{{user.photo}}" style="width: 30px;height: 30px;" class="rounded-circle"></label>
+                                    </div>
+                                    <div *ngIf="!user.photo">
+                                        <label style="float: left;"><img src="assets\imageDefault.jpg" style="width: 30px;height: 30px;" class="rounded-circle"></label>
+                                    </div>
+                                    &nbsp;{{user.username}}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="mb-3">
+                        <label>Date de début:</label>
+                        <input type="date" [(ngModel)] = "updatedProjet.dateDebut"  class="form-control" [ngModelOptions]="{standalone: true}">
+                    </div>
+                    <div class="mb-3">
+                        <label>Date d'échéance:</label>
+                        <input type="date" [(ngModel)] = "updatedProjet.dateFin" class="form-control" [ngModelOptions]="{standalone: true}">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" *ngIf="updatedProjet.nom" (click)="updateProjet(updatedProjet)" class="btn btn-outline-success">Update</button>
+                        <button type="submit" *ngIf="!updatedProjet.nom" (click)="updateProjet(updatedProjet)" class="btn btn-outline-success" disabled>Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</ng-template>
