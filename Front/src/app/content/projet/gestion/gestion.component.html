@@ -1,0 +1,454 @@
+<ng-template #content let-modal>
+	<div class="modal-header" style="background-color: #007bff;">
+		<h4 class="modal-title" id="modal-basic-title" style="color: aliceblue;">Création nouveau projet</h4>
+		<button style="background-color: antiquewhite;" type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+	</div>
+	<div class="modal-body">
+    <div class="row justify-content-center">
+      <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+        <form class="mx-1 mx-md-4" (ngSubmit)="onSubmit()">      
+          <div class="mb-3">
+            <label for="project-name" class="col-form-label">Nom du projet:</label>
+            <input type="text" [(ngModel)] = "projetCreate.nom" class="form-control" id="nom_projet" name="nom_projet" required/>
+          </div>
+          <div class="mb-3">
+            <label for="description-text" class="col-form-label">Description:</label>
+            <textarea class="form-control" [(ngModel)] = "projetCreate.description" id="description" name="description"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="project-name" class="col-form-label">Date debut (éstimation):</label>
+            <input type="date" [(ngModel)] = "projetCreate.dateDebut" class="form-control" id="dateDebut" name="dateDebut"/>
+          </div>
+          <div class="mb-3">
+            <label for="project-name" class="col-form-label">Date fin (éstimation):</label>
+            <input type="date" [(ngModel)] = "projetCreate.dateFin" class="form-control" id="dateFin" name="dateFin"/>
+          </div>
+          <div class="modal-footer">
+            <button *ngIf="projetCreate.nom && isNameExist()" type="submit" class="btn btn-outline-success">Save</button>
+            <button *ngIf="!projetCreate.nom || !isNameExist()" type="submit" class="btn btn-outline-success" disabled>Save</button>
+          </div>
+        </form>
+      </div>
+      <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
+        <!-- <form class="mx-1 mx-md-4" >          
+          <div enctype="multipart/form-data">
+            <input *ngIf="!imageSrc" type="file" id="form3Example4cd02" style="width: 320px;" multiple class="form-control" (change)="onFileSelected($event)">
+            <img *ngIf="imageSrc" [src]="imageSrc" alt="Image" width="320" height="auto">
+          </div>
+        </form> -->
+        <img src="assets/Projet-creation.webp" class="img-fluid" alt="Sample image">
+      </div>
+    </div>
+	</div>
+</ng-template>
+
+<ng-template #userDetail let-modal style="background-color: #eee;">
+  <div id="userProfile">
+    <div class="modal-header" style="background-color: #007bff;">
+      <h4 class="modal-title text-center" id="modal-basic-title" style="color: aliceblue;">Détail utilisateur</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body" style="background-color: #eee;">
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="card mb-4">
+            <div class="card-body text-center" >
+              <ng-container *ngIf="userPhoto.nom != null; else noUserPhoto">
+                <img src="assets\{{userPhoto.nom}}" alt="avatar"
+                class="rounded-circle img-fluid" style="width: 150px;">
+              </ng-container>
+              <ng-template #noUserPhoto>
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQP7NjSjKYoQFApBGgMXfrAioIDBfleCIZWyA&usqp=CAU" alt="avatar"
+                  class="rounded-circle img-fluid" style="width: 150px;">
+              </ng-template>
+              <h5 class="my-3">{{userProfil.username}}</h5>
+              <div *ngFor="let role of userProfil.realmRoles">
+                <p class="text-start">{{role}}</p>
+              </div>
+            </div>
+          </div>
+          <div class="card mb-4 mb-lg-0">
+            <div class="card-body p-0">
+              <ul class="list-group list-group-flush rounded-3">
+                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                  <i class="fas fa-globe fa-lg text-warning"></i>
+                  <p class="mb-0">https://mdbootstrap.com</p>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                  <i class="fab fa-github fa-lg" style="color: #333333;"></i>
+                  <p class="mb-0">mdbootstrap</p>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                  <i class="fab fa-twitter fa-lg" style="color: #55acee;"></i>
+                  <p class="mb-0">&#64;mdbootstrap</p>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                  <i class="fab fa-instagram fa-lg" style="color: #ac2bac;"></i>
+                  <p class="mb-0">mdbootstrap</p>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                  <i class="fab fa-facebook-f fa-lg" style="color: #3b5998;"></i>
+                  <p class="mb-0">mdbootstrap</p>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">FirstName</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0">{{userProfil.firstName}}</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">LastName</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0">{{userProfil.lastName}}</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Email</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0">{{userProfil.email}}</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Mobile</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0">(098) 765-4321</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Address</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0">Bay Area, San Francisco, CA</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="card mb-4 mb-md-0">
+                <div class="card-body">
+                  <p class="mb-4"><span class="text-primary font-italic me-1">assigment</span> Project Status
+                  </p>
+                  <p class="mb-1" style="font-size: .77rem;">Web Design</p>
+                  <div class="progress rounded" style="height: 5px;">
+                    <div class="progress-bar" role="progressbar" style="width: 80%" aria-valuenow="80"
+                      aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <p class="mt-4 mb-1" style="font-size: .77rem;">Website Markup</p>
+                  <div class="progress rounded" style="height: 5px;">
+                    <div class="progress-bar" role="progressbar" style="width: 72%" aria-valuenow="72"
+                      aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <p class="mt-4 mb-1" style="font-size: .77rem;">One Page</p>
+                  <div class="progress rounded" style="height: 5px;">
+                    <div class="progress-bar" role="progressbar" style="width: 89%" aria-valuenow="89"
+                      aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <p class="mt-4 mb-1" style="font-size: .77rem;">Mobile Template</p>
+                  <div class="progress rounded" style="height: 5px;">
+                    <div class="progress-bar" role="progressbar" style="width: 55%" aria-valuenow="55"
+                      aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <p class="mt-4 mb-1" style="font-size: .77rem;">Backend API</p>
+                  <div class="progress rounded mb-2" style="height: 5px;">
+                    <div class="progress-bar" role="progressbar" style="width: 66%" aria-valuenow="66"
+                      aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card mb-4 mb-md-0">
+                <div class="card-body">
+                  <p class="mb-4"><span class="text-primary font-italic me-1">assigment</span> Project Status
+                  </p>
+                  <p class="mb-1" style="font-size: .77rem;">Web Design</p>
+                  <div class="progress rounded" style="height: 5px;">
+                    <div class="progress-bar" role="progressbar" style="width: 80%" aria-valuenow="80"
+                      aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <p class="mt-4 mb-1" style="font-size: .77rem;">Website Markup</p>
+                  <div class="progress rounded" style="height: 5px;">
+                    <div class="progress-bar" role="progressbar" style="width: 72%" aria-valuenow="72"
+                      aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <p class="mt-4 mb-1" style="font-size: .77rem;">One Page</p>
+                  <div class="progress rounded" style="height: 5px;">
+                    <div class="progress-bar" role="progressbar" style="width: 89%" aria-valuenow="89"
+                      aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <p class="mt-4 mb-1" style="font-size: .77rem;">Mobile Template</p>
+                  <div class="progress rounded" style="height: 5px;">
+                    <div class="progress-bar" role="progressbar" style="width: 55%" aria-valuenow="55"
+                      aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <p class="mt-4 mb-1" style="font-size: .77rem;">Backend API</p>
+                  <div class="progress rounded mb-2" style="height: 5px;">
+                    <div class="progress-bar" role="progressbar" style="width: 66%" aria-valuenow="66"
+                      aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #projectDetail let-modal style="background-color: #eee;">
+  <div id="userProfile">
+    <div class="modal-header" style="background-color: #007bff;">
+      <h4 class="modal-title text-center" id="modal-basic-title" style="color: aliceblue;">Détail projet</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body" style="background-color: #eee;">
+      <div class="row">
+        <div class="col-lg-12 d-flex justify-content-center">
+          <img src="assets/Outils-Gestion-de-projet.png" style="float: center;width: 300px;height: 168px;" alt="">
+        </div>
+        <div class="col-lg-12">
+          <div class="card mb-4">
+            <div id="project-profile" class="card-body">
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Nom du projet</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0" *ngIf="updateProjet?.nom">{{updateProjet.nom}}</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Description</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0" *ngIf="updateProjet?.description">{{updateProjet.description}}</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Etat</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0" *ngIf="updateProjet?.etat">{{updateProjet.etat}}</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Date de création</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0" *ngIf="updateProjet?.dateCreation">{{updateProjet.dateCreation}}</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Date de debut</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0" *ngIf="updateProjet?.dateDebut">{{updateProjet.dateDebut}}</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Date de fin</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0" *ngIf="updateProjet?.dateFin">{{updateProjet.dateFin}}</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Createur</p>
+                </div>
+                <div class="col-sm-9" *ngIf="updateProjet?.idCreateur">
+                  <div *ngIf="updateProjet.idCreateur.photo">
+                    <div style="float: left;"><img src="assets\{{updateProjet.idCreateur.photo}}" style="width: 40px;height: 40px;" class="rounded-circle"></div>
+                  </div>
+                  <div *ngIf="!updateProjet.idCreateur.photo">
+                    <div style="float: left;"><img src="assets\imageDefault.jpg" style="width: 40px;height: 40px;" class="rounded-circle"></div>
+                  </div> 
+                  <p class="text-muted mb-0">&nbsp;&nbsp;{{updateProjet.idCreateur.username}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-12">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="card mb-4 mb-md-0">
+                <div class="card-body" style="max-height: 360px; overflow: auto;">
+                  <p class="mb-4"><span class="text-primary font-italic me-1">Représentation graphique</span> backlog</p>
+                  <div id="divChart">
+                    <canvas id="myChart2"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6" *ngIf="fonctionnalitesBacklog">
+              <div class="card mb-4 mb-md-0">
+                <div class="card-body" style="max-height: 360px; overflow: auto;">
+                  <p class="mb-4"><span class="text-primary font-italic me-1">Avançée</span> backlog</p>
+                  <ng-container *ngFor="let backlog of backlogsProjet">
+                    <p class="mb-1" style="font-size: .77rem;">{{backlog.nom}}</p>
+                    <div *ngIf="backlog.etat != 'Pas valable'" class="progress rounded" style="height: 5px;">
+                      <div class="progress-bar bg-secondary" role="progressbar" [style.width]="getFonctionnaliteAFaire(backlog)+'%'" [attr.aria-valuenow]="getFonctionnaliteAFaire(backlog)" aria-valuemin="0" aria-valuemax="100"></div>
+                      <div class="progress-bar bg-primary" role="progressbar" [style.width]="getFonctionnaliteEnProgres(backlog)+'%'" [attr.aria-valuenow]="getFonctionnaliteEnProgres(backlog)" aria-valuemin="0" aria-valuemax="100"></div>
+                      <div class="progress-bar bg-success" role="progressbar" [style.width]="getFonctionnaliteTermine(backlog)+'%'" [attr.aria-valuenow]="getFonctionnaliteTermine(backlog)" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <div *ngIf="backlog.etat == 'Pas valable'" class="progress rounded position-bottom" style="height: 5px;">
+                      <div class="progress-bar bg-danger" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <br>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-light" (click)="exportToPDF()">Export to PDF</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <button *ngIf="isAdministrateur()" type="button" class="btn btn-primary" (click)="workIn(updateProjet.idProjet)" (click)="modal.close('Save click')">Travailler sur</button>&nbsp;
+      <button type="button" class="btn btn-success" (click)="voirProjetDetail(updateProjet.idProjet)" (click)="modal.close('Save click')">Voir detail</button>&nbsp;
+      <button *ngIf="isAdministrateur()" type="button" class="btn btn-danger" (click)="delete()">Supprimer</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #newEvenement let-modal>
+  <div class="modal-header" style="background-color: #007bff;">
+		<h4 class="modal-title" id="modal-basic-title" style="color: aliceblue;">Nouveau venement</h4>
+		<button style="background-color: antiquewhite;" type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+	</div>
+  <div class="modal-body">
+    <div class="row">
+      <div>
+        <form class="mx-1 mx-md-4" (ngSubmit)="newEvenementMethod()">
+          <div class="mb-3">
+            <label for="project-name" class="col-form-label">Date de l'evenement:</label>
+            <input [(ngModel)] = "dateDebut" class="form-control" style="width: 230px" type="datetime-local" id="dateDebut" name="dateDebut"/>
+          </div>      
+          <div>
+            <label for="description-text" class="col-form-label">Description:</label>
+            <textarea class="form-control" [(ngModel)] = "newEvent.evenement" style="width: 100%" id="description" name="description"></textarea>
+          </div><br>
+          <button *ngIf="isAdministrateur()" class="btn btn-primary">Créer evenement</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #evenement let-modal>
+  <div class="modal-header" style="background-color: #007bff;">
+		<h4 class="modal-title" id="modal-basic-title" style="color: aliceblue;">Evenement</h4>
+		<button style="background-color: antiquewhite;" type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+	</div>
+  <div class="modal-body">
+    <button *ngIf="isAdministrateur()" class="btn btn-lg btn-outline-primary" (click)="open(newEvenement)">Nouveau evenement</button>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th style="width: 15%">Date</th>
+          <th style="width: 75%">Evenement</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let evenement of evenementsProjet | paginate:{itemsPerPage:7, currentPage:page, totalItems:totalLength}">
+          <td *ngIf="evenement.moment && !evenement.update" style="width: 15%">{{evenement.moment}}</td>
+          <td *ngIf="evenement.update == true" style="width: 15%">
+            <input type="datetime-local" [(ngModel)]="evenement.moment">
+          </td>
+          <td *ngIf="evenement.evenement && !evenement.update" style="width: 75%">{{evenement.evenement}}</td>
+          <td *ngIf="evenement.update == true" style="width: 15%">
+            <textarea [(ngModel)]="evenement.evenement" name="" id="" cols="30" rows="10"></textarea>
+          </td>
+          <td *ngIf="isAdministrateur()" class="float-end"><button class="btn btn-primary" (click)="updateEvent(evenement)">Update</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="pagination align-items-end">
+      <pagination-controls (pageChange)="page=$event"></pagination-controls>
+    </div>
+  </div>
+</ng-template>
+
+<button *ngIf="isAdministrateur()" class="btn btn-lg btn-outline-primary" (click)="open(content)">Nouveau Projet</button>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Nom du projet</th>
+      <th scope="col">Etat actuel</th>
+      <th scope="col">Temps restant</th>
+      <th scope="col">Avancement en jour</th>
+      <th scope="col">Avancement projet</th>
+      <th scope="col">Observation</th>
+      <th scope="col">Evènement</th>
+      <!-- <th scope="col">Créateur</th>
+      <th scope="col">Résponsable</th> -->
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let projects of projets | paginate:{itemsPerPage:7, currentPage:page, totalItems:totalLength}">
+      <td style="width: 70px;"><button type="button" class="btn btn-link btn-sm btn-rounded" (click)="open2(projectDetail,projects.idProjet)">
+        {{projects.nom}}
+      </button></td>
+      <td style="width: 70px;">{{projects.etat}}</td>
+      <td style="width: 70px;" *ngIf="projects.daysLeft">
+        <b *ngIf="projects.daysLeft > 0 && projects.daysLeft < 7" style="color: red">{{projects.daysLeft}} jour(s)</b>
+        <b *ngIf="projects.daysLeft > 0 && projects.daysLeft >= 7" style="color: green">{{projects.daysLeft}} jour(s)</b>
+        <b *ngIf="projects.daysLeft <= 0" style="color: rgb(190, 45, 9)">0 jour</b>
+      </td>
+      <td style="width: 70px;" *ngIf="projects.daysLeft == 0" style="color: red">{{projects.daysLeft}} jour</td>
+      <td style="width: 70px;" *ngIf="projects.daysLeft == null"></td>
+      <td style="width: 70px;" *ngIf="projects.avancementJ > 0 && projects.avancementJ <= 100">{{projects.avancementJ.toFixed(2)}}%</td>
+      <td style="width: 70px;" *ngIf="projects.avancementJ > 100">> 100%</td>
+      <td style="width: 70px;" *ngIf="projects.avancementJ < -0 || projects.avancementJ == 0">0%</td>
+      <td style="width: 70px;" *ngIf="!projects.avancementJ && projects.daysLeft == 0">Date debut = date fin</td>
+      <td style="width: 70px;" *ngIf="projects.avancementJ == null">Date debut et/ou date fin non défini</td>
+      <td style="width: 70px;" *ngIf="projects.avancementP">{{projects.avancementP.toFixed(2)}} %</td>
+      <td style="width: 70px;" *ngIf="!projects.avancementP">0 %</td>
+      <td style="width: 70px;color: red" *ngIf="projects.avancementP && projects.avancementJ && projects.avancementP < projects.avancementJ">en retard</td>
+      <td style="width: 70px;" *ngIf="projects.avancementP && projects.avancementJ && projects.avancementP == projects.avancementJ"></td>
+      <td style="width: 70px;color: green" *ngIf="projects.avancementP && projects.avancementJ && projects.avancementP > projects.avancementJ">en avance</td>
+      <td style="width: 70px;" *ngIf="!projects.avancementP || !projects.avancementJ"></td>
+      <td style="width: 70px;"><button class="btn btn-primary" (click)="openEvenement(evenement,projects.idProjet)">Voir</button></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="pagination align-items-end">
+  <pagination-controls (pageChange)="page=$event"></pagination-controls>
+</div>

@@ -1,0 +1,360 @@
+<ng-template #projectDetail let-modal style="background-color: #eee;">
+  <div id="userProfile">
+      <div class="modal-header" style="background-color: #007bff;">
+          <h4 class="modal-title" id="modal-basic-title" style="color: aliceblue;">Détails projet</h4>
+          <button style="background-color: antiquewhite;" type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+      </div>
+    <div class="modal-body" style="background-color: #eee;">
+      <div class="row">
+        <div class="col-lg-12 d-flex justify-content-center">
+          <img src="assets/Outils-Gestion-de-projet.png" style="float: center;width: 300px;height: 168px;" alt="">
+        </div>
+        <div class="col-lg-12">
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Nom du projet</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0" *ngIf="projetSelected?.nom">{{projetSelected.nom}}</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Description</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0" *ngIf="projetSelected?.description">{{projetSelected.description}}</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Etat</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0" *ngIf="projetSelected?.etat">{{projetSelected.etat}}</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Date de création</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0" *ngIf="projetSelected?.dateCreation">{{projetSelected.dateCreation}}</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Date de debut</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0" *ngIf="projetSelected?.dateDebut">{{projetSelected.dateDebut}}</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Date de fin</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0" *ngIf="projetSelected?.dateFin">{{projetSelected.dateFin}}</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Createur</p>
+                </div>
+                <div class="col-sm-9" *ngIf="projetSelected?.idCreateur">
+                  <div *ngIf="projetSelected.idCreateur.photo">
+                    <div style="float: left;"><img src="assets\{{projetSelected.idCreateur.photo}}" style="width: 40px;height: 40px;" class="rounded-circle"></div>
+                  </div>
+                  <div *ngIf="!projetSelected.idCreateur.photo">
+                    <div style="float: left;"><img src="assets\imageDefault.jpg" style="width: 40px;height: 40px;" class="rounded-circle"></div>
+                  </div> 
+                  <p class="text-muted mb-0">&nbsp;&nbsp;{{projetSelected.idCreateur.username}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-12">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="card mb-4 mb-md-0">
+                <div class="card-body" style="overflow: auto;">
+                  <p class="mb-4"><span class="text-primary font-italic me-1">Représentation graphique</span> backlog</p>
+                  <div id="divChart">
+                    <canvas id="myChart2"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6" *ngIf="fonctionnalitesBacklog">
+              <div class="card mb-4 mb-md-0">
+                <div class="card-body" style="max-height: 360px; overflow: auto;">
+                  <p class="mb-4"><span class="text-primary font-italic me-1">Avançée</span> backlog</p>
+                  <ng-container *ngFor="let backlog of backlogsProjet">
+                    <p class="mb-1" style="font-size: .77rem;">{{backlog.nom}}</p>
+                    <div class="progress rounded" style="height: 5px;">
+                      <div class="progress-bar bg-secondary" role="progressbar" [style.width]="getFonctionnaliteAFaire(backlog)+'%'" [attr.aria-valuenow]="getFonctionnaliteAFaire(backlog)" aria-valuemin="0" aria-valuemax="100"></div>
+                      <div class="progress-bar bg-primary" role="progressbar" [style.width]="getFonctionnaliteEnProgres(backlog)+'%'" [attr.aria-valuenow]="getFonctionnaliteEnProgres(backlog)" aria-valuemin="0" aria-valuemax="100"></div>
+                      <div class="progress-bar bg-success" role="progressbar" [style.width]="getFonctionnaliteTermine(backlog)+'%'" [attr.aria-valuenow]="getFonctionnaliteTermine(backlog)" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <br>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" (click)="workIn(projetSelected.idProjet)" (click)="modal.close('Save click')">Travailler sur</button>&nbsp;
+      <button type="button" class="btn btn-success" (click)="voirProjetDetail(projetSelected.idProjet)" (click)="modal.close('Save click')">Voir detail</button>&nbsp;
+    </div>
+  </div>
+</ng-template>
+
+<div class="center"><h3>Dashboard</h3></div>
+<br>   
+<div class="col-lg-12">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card mb-6 mb-md-0">
+        <div style="margin: 12px;cursor: pointer;">
+          <i class="bi bi-list-task"></i>&nbsp;
+          <b>Assignation en tant que Product owner</b>
+          <i style="float: right" (click)="basicCollapses.toggle()" class="bi bi-chevron-down"></i>
+        </div>
+        <div id="collapseExample" mdbCollapse #basicCollapses="mdbCollapse" style="position: static;">
+          <ng-container *ngFor="let projet of projets | paginate:{itemsPerPage:7, currentPage:page, totalItems:totalLength}">
+            <div (click)="openProjet(projet,projectDetail)" class="example-list" style="width: 100%;cursor: pointer">
+              <div style="margin-left: 10px">
+                <b>{{projet.nom}}</b>&nbsp;<i *ngIf="projet.etat == 'Terminé'" class="bi bi-check-lg text-success"></i><br>
+                {{projet.dateDebut}} -> {{projet.dateFin}}
+              </div> 
+            </div>                                           
+          </ng-container>                                      
+          <div class="pagination align-items-end">
+            <pagination-controls (pageChange)="page=$event"></pagination-controls>
+          </div>
+        </div>
+      </div>
+      <br><br>
+      <div class="card mb-6 mb-md-0">
+        <div style="margin: 12px;cursor: pointer;">
+          <i class="bi bi-list-task"></i>&nbsp;
+          <b>Assignation en tant que Scrum master</b>
+          <i style="float: right" (click)="backlogCollapse.toggle()" class="bi bi-chevron-down"></i>
+        </div>
+        <div id="collapseExample" mdbCollapse #backlogCollapse="mdbCollapse" style="position: static;">
+          <b *ngIf="projectsSM[0]" style="margin-left: 12px;"><u>Projet(s)</u></b>
+          <ng-container *ngFor="let project of projectsSM | paginate:{itemsPerPage:7, currentPage:page2, totalItems:totalLength}">
+            <div (click)="openProjet(project,projectDetail)" class="example-list" style="width: 100%;cursor: pointer">
+              <div style="margin-left: 10px">
+                <b>{{project.nom}}</b>&nbsp;<i *ngIf="project.etat == 'Terminé'" class="bi bi-check-lg text-success"></i><br>
+                {{project.dateDebut}} -> {{project.dateFin}}
+              </div> 
+            </div>                                           
+          </ng-container>
+          <b *ngIf="backlogsSM[0]" style="margin-left: 12px;"><u>Backlog(s)</u></b>
+          <ng-container *ngFor="let backlog of backlogsSM | paginate:{itemsPerPage:7, currentPage:page2, totalItems:totalLength}">
+            <div (click)="openBacklog(backlog)" class="example-list" style="width: 100%;cursor: pointer">
+              <div style="margin-left: 10px">
+                <b>{{backlog.nom}}</b>&nbsp;<i *ngIf="backlog.etat == 'Terminé'" class="bi bi-check-lg text-success"></i><br>
+                {{backlog.dateDebut}} -> {{backlog.dateFin}}
+              </div> 
+            </div>                                           
+          </ng-container>
+          <b *ngIf="fonctionnalitesSM[0]" style="margin-left: 12px;"><u>Fonctionnalite(s)</u></b>
+          <ng-container *ngFor="let backlog of fonctionnalitesSM | paginate:{itemsPerPage:7, currentPage:page2, totalItems:totalLength}">
+            <div (click)="openFonctionnalite(backlog)" class="example-list" style="width: 100%;cursor: pointer">
+              <div style="margin-left: 10px">
+                <b>{{backlog.nom}}</b>&nbsp;<i *ngIf="backlog.etat == 'Terminé'" class="bi bi-check-lg text-success"></i><br>
+                {{backlog.dateDebut}} -> {{backlog.dateFin}}
+              </div> 
+            </div>                                           
+          </ng-container>
+          <b *ngIf="tachesSM[0]" style="margin-left: 12px;"><u>Tache(s)</u></b>
+          <ng-container *ngFor="let backlog of tachesSM | paginate:{itemsPerPage:7, currentPage:page2, totalItems:totalLength}">
+            <div (click)="openTache(backlog)" class="example-list" style="width: 100%;cursor: pointer">
+              <div style="margin-left: 10px">
+                <b>{{backlog.nom}}</b>&nbsp;<i *ngIf="backlog.etat == 'Terminé'" class="bi bi-check-lg text-success"></i><br>
+                {{backlog.dateDebut}} -> {{backlog.dateFin}}
+              </div> 
+            </div>                                           
+          </ng-container>                                  
+          <div class="pagination align-items-end">
+              <pagination-controls (pageChange)="page2=$event"></pagination-controls>
+          </div>
+        </div>
+      </div>
+      <br><br>
+      <div class="card mb-6 mb-md-0">
+        <div style="margin: 12px;cursor: pointer;">
+          <i class="bi bi-list-task"></i>&nbsp;
+          <b>Assignation en tant que Dévellopeur</b>
+          <i style="float: right" (click)="devCollapse.toggle()" class="bi bi-chevron-down"></i>
+        </div>
+        <div id="collapseExample" mdbCollapse #devCollapse="mdbCollapse" style="position: static;">
+          <b *ngIf="projectsDev[0]" style="margin-left: 12px;"><u>Projet(s)</u></b>
+          <ng-container *ngFor="let project of projectsDev | paginate:{itemsPerPage:7, currentPage:page3, totalItems:totalLength}">
+            <div (click)="openProjet(project,projectDetail)" class="example-list" style="width: 100%;cursor: pointer">
+              <div style="margin-left: 10px">
+                <b>{{project.nom}}</b>&nbsp;<i *ngIf="project.etat == 'Terminé'" class="bi bi-check-lg text-success"></i><br>
+                {{project.dateDebut}} -> {{project.dateFin}}
+              </div> 
+            </div>                                           
+          </ng-container>
+          <b *ngIf="backlogsDev[0]" style="margin-left: 12px;"><u>Backlog(s)</u></b>
+          <ng-container *ngFor="let backlog of backlogsDev| paginate:{itemsPerPage:7, currentPage:page3, totalItems:totalLength}">
+            <div (click)="openBacklog(backlog)" class="example-list" style="width: 100%;cursor: pointer">
+              <div style="margin-left: 10px">
+                <b>{{backlog.nom}}</b>&nbsp;<i *ngIf="backlog.etat == 'Terminé'" class="bi bi-check-lg text-success"></i><br>
+                {{backlog.dateDebut}} -> {{backlog.dateFin}}
+              </div> 
+            </div>                                           
+          </ng-container>
+          <b *ngIf="fonctionnalitesDev[0]" style="margin-left: 12px;"><u>Fonctionnalite(s)</u></b>
+          <ng-container *ngFor="let backlog of fonctionnalitesDev | paginate:{itemsPerPage:7, currentPage:page3, totalItems:totalLength}">
+            <div (click)="openFonctionnalite(backlog)" class="example-list" style="width: 100%;cursor: pointer">
+              <div style="margin-left: 10px">
+                <b>{{backlog.nom}}</b>&nbsp;<i *ngIf="backlog.etat == 'Terminé'" class="bi bi-check-lg text-success"></i><br>
+                {{backlog.dateDebut}} -> {{backlog.dateFin}}
+              </div> 
+            </div>                                           
+          </ng-container>
+          <b *ngIf="tachesDev[0]" style="margin-left: 12px;"><u>Tache(s)</u></b>
+          <ng-container *ngFor="let backlog of tachesDev | paginate:{itemsPerPage:7, currentPage:page3, totalItems:totalLength}">
+            <div (click)="openTache(backlog)" class="example-list" style="width: 100%;cursor: pointer">
+              <div style="margin-left: 10px">
+                <b>{{backlog.nom}}</b>&nbsp;<i *ngIf="backlog.etat == 'Terminé'" class="bi bi-check-lg text-success"></i><br>
+                {{backlog.dateDebut}} -> {{backlog.dateFin}}
+              </div> 
+            </div>                                           
+          </ng-container>                                  
+          <div class="pagination align-items-end">
+            <pagination-controls (pageChange)="page3=$event"></pagination-controls>
+          </div>
+        </div>
+      </div>
+      <br><br>
+      <div class="card mb-6 mb-md-0">
+        <div style="margin: 12px;cursor: pointer;">
+          <i class="bi bi-list-task"></i>&nbsp;
+          <b>Assignation en tant que Responsable</b>
+          <i style="float: right" (click)="respCollapse.toggle()" class="bi bi-chevron-down"></i>
+        </div>
+        <div id="collapseExample" mdbCollapse #respCollapse="mdbCollapse" style="position: static;">
+          <b *ngIf="projectsResp[0]" style="margin-left: 12px;"><u>Projet(s)</u></b>
+          <ng-container *ngFor="let project of projectsResp | paginate:{itemsPerPage:7, currentPage:page4, totalItems:totalLength}">
+            <div (click)="openProjet(project,projectDetail)" class="example-list" style="width: 100%;cursor: pointer">
+              <div style="margin-left: 10px">
+                <b>{{project.nom}}</b>&nbsp;<i *ngIf="project.etat == 'Terminé'" class="bi bi-check-lg text-success"></i><br>
+                {{project.dateDebut}} -> {{project.dateFin}}
+              </div> 
+            </div>                                           
+          </ng-container>
+          <b *ngIf="backlogsResp[0]" style="margin-left: 12px;"><u>Backlog(s)</u></b>
+          <ng-container *ngFor="let backlog of backlogsResp | paginate:{itemsPerPage:7, currentPage:page4, totalItems:totalLength}">
+            <div (click)="openBacklog(backlog)" class="example-list" style="width: 100%;cursor: pointer">
+              <div style="margin-left: 10px">
+                <b>{{backlog.nom}}</b>&nbsp;<i *ngIf="backlog.etat == 'Terminé'" class="bi bi-check-lg text-success"></i><br>
+                {{backlog.dateDebut}} -> {{backlog.dateFin}}
+              </div> 
+            </div>                                           
+          </ng-container>
+          <b *ngIf="fonctionnalitesResp[0]" style="margin-left: 12px;"><u>Fonctionnalite(s)</u></b>
+          <ng-container *ngFor="let backlog of fonctionnalitesResp | paginate:{itemsPerPage:7, currentPage:page4, totalItems:totalLength}">
+            <div (click)="openFonctionnalite(backlog)" class="example-list" style="width: 100%;cursor: pointer">
+              <div style="margin-left: 10px">
+                <b>{{backlog.nom}}</b>&nbsp;<i *ngIf="backlog.etat == 'Terminé'" class="bi bi-check-lg text-success"></i><br>
+                {{backlog.dateDebut}} -> {{backlog.dateFin}}
+              </div> 
+            </div>                                           
+          </ng-container>
+          <b *ngIf="tachesResp[0]" style="margin-left: 12px;"><u>Tache(s)</u></b>
+          <ng-container *ngFor="let backlog of tachesResp | paginate:{itemsPerPage:7, currentPage:page4, totalItems:totalLength}">
+            <div (click)="openTache(backlog)" class="example-list" style="width: 100%;cursor: pointer">
+              <div style="margin-left: 10px">
+                <b>{{backlog.nom}}</b>&nbsp;<i *ngIf="backlog.etat == 'Terminé'" class="bi bi-check-lg text-success"></i><br>
+                {{backlog.dateDebut}} -> {{backlog.dateFin}}
+              </div> 
+            </div>                                           
+          </ng-container>                                  
+          <div class="pagination align-items-end">
+            <pagination-controls (pageChange)="page4=$event"></pagination-controls>
+          </div>
+        </div>
+      </div>
+      <br><br>
+    </div>
+      <!-- <div class="col-md-4">
+          <div class="col">
+              <a class="btn btn-light btn-rounded"
+                (click)="basicCollapse2.toggle()"
+                [attr.aria-expanded]="!basicCollapses.collapsed"
+                aria-controls="collapseExample"><i class="bi bi-chevron-down"></i> Date d'échéance les plus proches non terminé
+              </a>
+              <div  id="collapseExample" mdbCollapse #basicCollapse2="mdbCollapse">
+                <ng-container *ngFor="let resp of responsabilite">
+                  <div class="card">
+                    <ng-container *ngIf="resp.projet && !resp.backlog && !resp.fonctionnalite && !resp.tache">
+                      <div class="card-header">
+                        <h5 style="float: left;" *ngIf="resp.dateFinString">{{resp.dateFinString}}</h5>
+                        <h5 style="float: right;">{{getAvance(resp)}} %</h5>
+                      </div>
+                      <div class="card-body">
+                        <h5 class="card-title">{{resp.projet.nom}}</h5>
+                        <p class="card-text">{{resp.projet.description}}</p>
+                        <a (click)="openProjet(resp.projet,projectDetail)" class="btn btn-primary">Voir</a>
+                      </div>
+                    </ng-container>
+                    <ng-container *ngIf="resp.backlog && !resp.fonctionnalite && !resp.tache">
+                      <div class="card-header">
+                        <h5 style="float: left;" *ngIf="resp.dateFinString">{{resp.dateFinString}}</h5>
+                        <h5 style="float: right;">{{getAvance(resp)}} %</h5>
+                      </div>
+                      <div class="card-body">
+                        <h5 class="card-title">{{resp.backlog.nom}}</h5>
+                        <p class="card-text">{{resp.backlog.description}}</p>
+                        <a (click)="openBacklog(resp.backlog)" class="btn btn-primary">Voir</a>
+                      </div>
+                    </ng-container>
+                    <ng-container *ngIf="!resp.backlog && resp.fonctionnalite && !resp.tache">
+                      <div class="card-header">
+                        <h5 style="float: left;" *ngIf="resp.dateFinString">{{resp.dateFinString}}</h5>
+                        <h5 style="float: right;">{{getAvance(resp)}} %</h5>
+                      </div>
+                      <div class="card-body">
+                        <h5 class="card-title">{{resp.fonctionnalite.nom}}</h5>
+                        <p class="card-text">{{resp.fonctionnalite.description}}</p>
+                        <a (click)="openFonctionnalite(resp.fonctionnalite)" class="btn btn-primary">Voir</a>
+                      </div>
+                    </ng-container>
+                    <ng-container *ngIf="!resp.backlog && !resp.fonctionnalite && resp.tache">
+                      <div class="card-header">
+                        <h5 style="float: left;" *ngIf="resp.dateFinString">{{resp.dateFinString}}</h5>
+                        <h5 style="float: right;">{{getAvance(resp)}} %</h5>
+                      </div>
+                      <div class="card-body">
+                        <h5 class="card-title">{{resp.tache.nom}}</h5>
+                        <p class="card-text">{{resp.tache.description}}</p>
+                        <a (click)="openTache(resp.tache)" class="btn btn-primary">Voir</a>
+                      </div>
+                    </ng-container>
+                  </div>
+                </ng-container>
+              
+              </div>
+          </div>
+      </div> -->
+  </div>
+</div>

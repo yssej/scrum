@@ -1,0 +1,10 @@
+<ng-template #newEvenement let-modal>
+	<div id="divChart">
+		<canvas id="myChart"></canvas>
+	</div>
+</ng-template>
+<div *ngIf="projet && isLogged" id="divChart">
+	<button class="btn btn-primary" (click)="open(newEvenement)">open</button>
+	<p>huhu</p>
+	<canvas *ngIf="projet && isLogged" #myChart></canvas>
+</div>

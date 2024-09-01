@@ -1,0 +1,18 @@
+
+<div class="container mt-4">
+    <div class="col-md-9">
+        <div class="h-100 p-5 bg-light border rounded-3">
+            <h2 *ngIf="!username">Bonjour</h2>
+            <h2 *ngIf="username">Vous êtes connecté en tant que {{username}}</h2>
+            <p *ngIf="!username">Vous devez vous connecter pour accéder complètement au site.</p>
+            <p *ngIf="username">Voulez-vous continuer?</p>
+            <ng-container *ngIf="!username">
+                <button class="btn btn-outline-primary btn-rounded" type="button" (click)="login()">Se connecter</button>
+            </ng-container>
+            <ng-container *ngIf="username">
+                <button class="btn btn-outline-success btn-rounded" type="button" (click)="login()">Continuer</button>&nbsp;
+                <button class="btn btn-outline-danger btn-rounded" type="button" (click)="logout()">Déconnecter</button>
+            </ng-container>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,8 @@
+<app-navbar [isLogged]="isLogged" [username]="username" [role]="role" ></app-navbar>
+<app-sidebar [isLogged]="isLogged" [roles]="roles" [isAdmin]="isAdmin" [isPO]="isPO" [isSM]="isSM" [isDev]="isDev" (onToggleSidenav)="onToggleSidenav($event)"></app-sidebar>
+<main>
+  <app-content 
+    [collapsed]="isSidenavCollapsed"
+    [screenWidth]="screenWidth"
+  ></app-content>
+</main>
