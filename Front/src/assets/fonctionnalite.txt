@@ -1,4 +1,0 @@
-notifier quand kelk1 commente
-recevoir mail quand assigné
-
-update

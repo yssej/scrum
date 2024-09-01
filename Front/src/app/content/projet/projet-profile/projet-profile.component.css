@@ -1,5 +1,0 @@
-.divChart {
-    overflow-x: auto;   /* Enable horizontal scrolling */
-    max-width: 100%;    /* Ensure the container doesn't exceed its parent's width */
-    white-space: nowrap; /* Prevent text wrapping within the container */
-}

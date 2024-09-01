@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-ScrumJava8Application<Scrum_java8>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.main.ScrumJava8Application",
+            "projectName": "Scrum_java8",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
